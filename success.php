@@ -1,35 +1,104 @@
-<!doctype html>
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
-   <title>Ваше сообщение успешно отправлено</title>
-</head>
-
-<body>
-
 <?php
-   $back = "<p><a href=\"javascript: history.back()\">Вернуться назад</a></p>";
 
-   if(!empty($_POST['name']) and !empty($_POST['phone']) and !empty($_POST['mail'])
-   and !empty($_POST['message'])){
-      $name = trim(strip_tags($_POST['name']));
-      $phone = trim(strip_tags($_POST['phone']));
-      $mail = trim(strip_tags($_POST['mail']));
-      $message = trim(strip_tags($_POST['message']));
+$adminemail="k_alinakolosova@mail.ru";  // e-mail админа
 
-      mail('почта_для_получения_сообщений@gmail.com', 'Письмо с адрес_вашего_сайта',
-      'Вам написал: '.$name.'<br />Его номер: '.$phone.'<br />Его почта: '.$mail.'<br />
-      Его сообщение: '.$message,"Content-type:text/html;charset=windows-1251");
 
-      echo "Ваше сообщение успешно отправлено!<Br> Вы получите ответ в
-      ближайшее время<Br> $back";
+$date=date("d.m.y"); // число.месяц.год
 
-      exit;
-   }
-   else {
-      echo "Для отправки сообщения заполните все поля! $back";
-      exit;
-   }
+$time=date("H:i"); // часы:минуты:секунды
+
+$backurl="<?
+
+$adminemail="k_alinakolosova@mail.ru";
+
+
+$date=date("d.m.y"); // число.месяц.год
+
+$time=date("H:i"); // часы:минуты:секунды
+
+$backurl="file:"Users/macbookair/Desktop/templated-transit/index.html";  // На какую страничку переходит после отправки письма
+
+//---------------------------------------------------------------------- //
+
+
+
+// Принимаем данные с формы
+
+$name=$_POST['name'];
+
+$email=$_POST['email'];
+
+$msg=$_POST['message'];
+
+
+
+// Проверяем валидность e-mail
+
+if (!preg_match("|^([a-z0-9_\.\-]{1,20})@([a-z0-9\.\-]{1,20})\.([a-z]{2,4})|is",
+strtolower($email)))
+
+ {
+
+  echo
+"<center>Вернитесь <a
+href='javascript:history.back(1)'><B>назад</B></a>. Вы
+указали неверные данные!";
+
+  }
+
+ else
+
+ {
+
+
+$msg="
+
+
+<p>Имя: $name</p>
+
+
+<p>E-mail: $email</p>
+
+
+<p>Сообщение: $msg</p>
+
+
+";
+
+
+
+ // Отправляем письмо админу
+
+mail("$adminemail", "$date $time Сообщение
+от $name", "$msg");
+
+
+
+// Сохраняем в базу данных
+
+$f = fopen("message.txt", "a+");
+
+fwrite($f," \n $date $time Сообщение от $name");
+
+fwrite($f,"\n $msg ");
+
+fwrite($f,"\n ---------------");
+
+fclose($f);
+
+
+
+// Выводим сообщение пользователю
+
+print "<script language='Javascript'><!--
+function reload() {location = \"$backurl\"}; setTimeout('reload()', 6000);
+//--></script>
+
+$msg
+
+<p>Сообщение отправлено! Подождите, сейчас вы будете перенаправлены на главную страницу...</p>";
+exit;
+
+ }
+
 ?>
-</body>
-</html>
